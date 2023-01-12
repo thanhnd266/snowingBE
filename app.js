@@ -6,7 +6,6 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const router = require('./routes');
 const port = process.env.PORT || 8800;
-const cookieParser = require("cookie-parser");
 
 const app = express();
 
@@ -14,7 +13,6 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(morgan('dev'))
-app.use(cookieParser());
 
 app.get('/', (req, res) => {
     res.status(200).send('Hello hello world');

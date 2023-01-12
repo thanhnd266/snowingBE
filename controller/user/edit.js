@@ -1,33 +1,37 @@
 const User = require("../../model/User");
 
 const editUser = async (req, res) => {
-    const { _id, username, email, age, description, company } = req.body;
+    const { _id, username, email, age, description, workout, company } = req.body;
 
     const query = {
         username,
         email,
         age,
         description,
+        workout,
         company,
     }
+
+    console.log(query)
     
     try {
-
-        const isExistUser = await User.findOne({ username });
-        const isExistEmail = await User.findOne({ email });
-
-        if(isExistUser) {
-            return res.status(400).json({
-                message: 'Username already exists',
-                status: 400,
-            })
-        }
-
-        if(isExistEmail) {
-            return res.status(400).json({
-                message: 'Email already exists',
-                status: 400,
-            })
+        if(username || email) {
+            const isExistUser = await User.findOne({ username });
+            const isExistEmail = await User.findOne({ email });
+    
+            if(isExistUser) {
+                return res.status(400).json({
+                    message: 'Username already exists',
+                    status: 400,
+                })
+            }
+    
+            if(isExistEmail) {
+                return res.status(400).json({
+                    message: 'Email already exists',
+                    status: 400,
+                })
+            }
         }
 
         const user = await User.findOneAndUpdate({ _id }, query, { new: true });
@@ -42,7 +46,6 @@ const editUser = async (req, res) => {
         
         return res.status(400).json({
             message: 'Edit user failure',
-            error: err.message,
             status: 400
         })
 

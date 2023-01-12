@@ -2,7 +2,7 @@ const { hashPassword } = require("../../helper/hashPassword");
 const User = require("../../model/User");
 
 const createUser = async (req, res) => {
-    const { username, email, password, company, age, description } = req.body;
+    const { username, email, password, workout, company, age, description } = req.body;
 
     try {
         const isExistUser = await User.findOne({ username });
@@ -28,6 +28,7 @@ const createUser = async (req, res) => {
                 email,
                 password: hashPassword(password),
                 age,
+                workout,
                 company,
                 description,
             });

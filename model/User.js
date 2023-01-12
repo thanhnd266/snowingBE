@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { workoutSchema } = require('./Workout');
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -19,6 +20,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         min: 6,
+    },
+    workout: {
+        type: [workoutSchema],
+        default: []
     },
     company: {
         name: {
