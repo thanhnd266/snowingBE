@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const jwtSecret = process.env.JWT_SECRET;
-const accessTokenLife = process.env.ACCESS_TOKEN_LIFE;
-const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE;
+const accessTokenLife = parseInt(process.env.ACCESS_TOKEN_LIFE);
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const refreshTokenLife = parseInt(process.env.REFRESH_TOKEN_LIFE);
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
 const generateToken = (payload, secretSignature, tokenLife) => {
     return jwt.sign(
@@ -17,8 +18,8 @@ const generateToken = (payload, secretSignature, tokenLife) => {
 
 const generateDataToken = async (payload) => {
     const generate = await Promise.all([
-        generateToken(payload, jwtSecret, accessTokenLife),
-        generateToken(payload, jwtSecret, refreshTokenLife),
+        generateToken(payload, accessTokenSecret, accessTokenLife),
+        generateToken(payload, refreshTokenSecret, refreshTokenLife),
     ]);
 
     return {
@@ -28,8 +29,9 @@ const generateDataToken = async (payload) => {
     }
 };
 
-const verifyToken = (token) => {
-    return jwt.verify(token, jwtSecret);
+const verifyToken = (token, type) => {
+    let secretKey = (type === 'access') ? accessTokenSecret : refreshTokenSecret;
+    return jwt.verify(token, secretKey);
 };
 
 module.exports = {

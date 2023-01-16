@@ -5,9 +5,43 @@ const { verifyRedis } = require("../../helper/redis");
 const authenticate = async (req, res, next) => {
     const { authorization } = req.headers;
 
-    console.log(authorization)
+    if(!authorization || !authorization.startsWith("Bearer")) {
+        return res.json({
+            status: 401,
+            error: "access_token_expired",
+        })
+    };
 
-    // return next();
+    const token = authorization.split(' ')[1];
+
+    try {
+        //check if it exists in redis
+        const is_verified = await verifyRedis(token);
+
+        if(!is_verified) {
+            return res.json({
+                status: 401,
+                error: "access_token_expired",
+            });
+        };
+
+        //check verify with jwt
+        const payload = await verifyToken(token, 'access');
+
+        req.user = {
+            userId: payload.data,
+            token,
+        }
+
+        return next();
+
+    } catch(err) {
+        return res.json({
+            hello: 'Voa dya nay',
+            status: 401,
+            error: "access_token_expired"
+        })
+    }
 }
 
 const verifyRefreshToken = async (req, res, next) => {
