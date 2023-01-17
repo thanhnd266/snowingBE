@@ -6,9 +6,9 @@ const authenticate = async (req, res, next) => {
     const { authorization } = req.headers;
 
     if(!authorization || !authorization.startsWith("Bearer")) {
-        return res.json({
+        return res.status(401).json({
             status: 401,
-            error: "access_token_expired",
+            error_message: "access_token_expired",
         })
     };
 
@@ -19,9 +19,9 @@ const authenticate = async (req, res, next) => {
         const is_verified = await verifyRedis(token);
 
         if(!is_verified) {
-            return res.json({
+            return res.status(401).json({
                 status: 401,
-                error: "access_token_expired",
+                error_message: "access_token_expired",
             });
         };
 
@@ -36,47 +36,48 @@ const authenticate = async (req, res, next) => {
         return next();
 
     } catch(err) {
-        return res.json({
-            hello: 'Voa dya nay',
+        return res.status(401).json({
             status: 401,
-            error: "access_token_expired"
+            error_message: "access_token_expired"
         })
     }
 }
 
 const verifyRefreshToken = async (req, res, next) => {
-    const { refreshToken } = req.body;
+    const { refresh_token } = req.body;
 
-    if(!refreshToken) {
-        return res.json({
+    console.log(refresh_token);
+
+    if(!refresh_token) {
+        return res.status(401).json({
             status: 401,
-            error: "Invalid Param"
+            error_message: "Invalid Param"
         })
     }
 
     try {
 
-        const is_verified = await verifyRedis(refreshToken);
+        const is_verified = await verifyRedis(refresh_token);
         if(!is_verified) {
-            return res.json({
+            return res.status(401).json({
                 status: 401,
-                error: "Refresh Token Expired",
+                error_message: "Refresh Token Expired",
             })
         }
 
         //check with jwt
-        const payload = await verifyToken(refreshToken);
+        const payload = await verifyToken(refresh_token);
 
         req.auth = {};
 
         req.auth.payload = payload;
-        req.auth.current_refresh_token = refreshToken;
+        req.auth.current_refresh_token = refresh_token;
 
         return next();
     } catch(err) {
-        return res.json({
+        return res.status(401).json({
             status: 401,
-            error: "Refresh Token Expired",
+            error_message: "Refresh Token Expired",
         })
     }
 };
