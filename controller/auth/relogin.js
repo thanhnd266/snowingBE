@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     redisHelper.generateRedis(dataToken);
 
     res.status(200).json({
-        status: true,
+        status: 200,
         message: 'Relogin successfully',
         data: dataToken,
     })

@@ -22,13 +22,13 @@ const addWorkout = async (req, res) => {
             ],
         };
 
-        const user = await UserSchema.findOneAndUpdate({ _id: userId}, data, { new: true });
+        const user = await UserSchema.findOneAndUpdate({ _id: userId }, data, { new: true });
 
         if(user) {
             return res.status(200).json({
                 message: 'Add new workout successfully',
                 status: 200,
-                user
+                data: user
             })
         }
 

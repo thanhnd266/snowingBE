@@ -3,6 +3,8 @@ const { verifyRedis } = require("../../helper/redis");
 
 
 const authenticate = async (req, res, next) => {
+
+
     const { authorization } = req.headers;
 
     if(!authorization || !authorization.startsWith("Bearer")) {
@@ -15,6 +17,7 @@ const authenticate = async (req, res, next) => {
     const token = authorization.split(' ')[1];
 
     try {
+
         //check if it exists in redis
         const is_verified = await verifyRedis(token);
 
@@ -46,11 +49,9 @@ const authenticate = async (req, res, next) => {
 const verifyRefreshToken = async (req, res, next) => {
     const { refresh_token } = req.body;
 
-    console.log(refresh_token);
-
     if(!refresh_token) {
-        return res.status(401).json({
-            status: 401,
+        return res.status(403).json({
+            status: 403,
             error_message: "Invalid Param"
         })
     }
@@ -58,6 +59,7 @@ const verifyRefreshToken = async (req, res, next) => {
     try {
 
         const is_verified = await verifyRedis(refresh_token);
+
         if(!is_verified) {
             return res.status(401).json({
                 status: 401,

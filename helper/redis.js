@@ -3,7 +3,7 @@ const { accessTokenRedisLife, refreshTokenRedisLife, forgotTokenRedisLife } = re
 
 const generateRedis = async (data) => {
     await Promise.all([
-        redisClient.SET(data.access_token, data.access_token.toString()),
+        redisClient.SET(data.access_token, data.refresh_token.toString()),
         redisClient.EXPIRE(data.access_token, accessTokenRedisLife),
         redisClient.SET(data.refresh_token, data.access_token.toString()),
         redisClient.EXPIRE(data.refresh_token, refreshTokenRedisLife)
